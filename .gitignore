@@ -1,0 +1,3 @@
+*.o
+a.out
+tests_a.out
