@@ -16,6 +16,7 @@ using namespace std;
 int main() {
 	Player player1 = {};
 	Hand dealer_hand = {};
+	Deck deck = {};
 	int og_bal = 0;
 	float wager = 0;
 	float temp_balance = 0;
@@ -44,6 +45,7 @@ int main() {
 		// Reset variables
 		clearHand(player1.current_hand);
 		clearHand(dealer_hand);
+		clearDeck(deck);
 		temp_balance = player1.balance;
 		player_turn_over = false;
 		gameover = false;
@@ -65,16 +67,16 @@ int main() {
 		// Check if player is lucky:
 		if ((rand() % 101) <= 15)
 		{
-			addCard(player1.current_hand, generateRandomCard(1,13, rand() % 101));
-			addCard(player1.current_hand, generateRandomCard(1,13, rand() % 101));
+			addCard(player1.current_hand, generateRandomCard(deck, 1,13, rand() % 101));
+			addCard(player1.current_hand, generateRandomCard(deck, 1,13, rand() % 101));
 		}
 		else
 		{
-			addCard(player1.current_hand, generateRandomCard(1,13));
-			addCard(player1.current_hand, generateRandomCard(1,13));
+			addCard(player1.current_hand, generateRandomCard(deck, 1,13));
+			addCard(player1.current_hand, generateRandomCard(deck, 1,13));
 		}
-		addCard(dealer_hand, generateRandomCard(1,13));
-		addCard(dealer_hand, generateRandomCard(1,13));
+		addCard(dealer_hand, generateRandomCard(deck, 1,13));
+		addCard(dealer_hand, generateRandomCard(deck, 1,13));
 
 		// Print Hands
 		cout << endl;
@@ -180,7 +182,7 @@ int main() {
 
 				if (choice == "Hit")
 				{
-					addCard(player1.current_hand, generateRandomCard(1,13));
+					addCard(player1.current_hand, generateRandomCard(deck, 1,13));
 					outputHand(player1.current_hand, player1.name);
 
 				}
@@ -191,7 +193,7 @@ int main() {
 				else if (choice == "Double-Down")
 				{
 					wager = wager * 2;
-					addCard(player1.current_hand, generateRandomCard(1,13));
+					addCard(player1.current_hand, generateRandomCard(deck, 1,13));
 					outputHand(player1.current_hand, player1.name);
 					if (getTotal(player1.current_hand) > 21)
 					{
@@ -215,7 +217,7 @@ int main() {
 			outputHand(dealer_hand, "Dealer");
 			while (getTotal(dealer_hand) < 17)
 			{
-				addCard(dealer_hand, generateRandomCard(1,13));
+				addCard(dealer_hand, generateRandomCard(deck, 1,13));
 				cout << "Dealer Hits." << endl;
 				outputHand(dealer_hand, "Dealer");
 			}

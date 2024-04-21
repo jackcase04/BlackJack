@@ -1,6 +1,7 @@
 #ifndef BLACKJACK_H
 #define BLACKJACK_H
 
+#include <iostream>
 #include <string>
 
 using namespace std;
@@ -10,11 +11,24 @@ struct Card {
 	string name_value;
 	int num_value;
 
+    bool operator==(const Card& card) const {
+        return (name_value == card.name_value) && (suit == card.suit);
+    }
+
+    friend ostream& operator<<(ostream& os, const Card& card) {
+        os << card.name_value << " of " << card.suit;
+        return os;
+    }
 };
 
 struct Hand {
     int index;
     Card cards[17];
+};
+
+struct Deck {
+    int index;
+    Card cards[52];
 };
 
 struct Player {
@@ -33,13 +47,15 @@ struct Player {
 // This function generates a random card value within an acceptable range. 
 // Pre: integer min, integer max
 // Post: Returns a randomly generated structure Card.
-Card generateRandomCard(const int min, const int max);
+Card generateRandomCard(Deck& deck, const int min, const int max);
 
 // This special version not only generates a random card value but also incorporates a “luck factor”
 // that occasionally increases the likelihood of drawing a 10-valued card.
 // Pre: integer min, integer max, integer probability
 // Post: Returns a randomly generated structure Card that has a higher chance of being a face card.
-Card generateRandomCard(const int min, const int max, const int probability);
+Card generateRandomCard(Deck& deck, const int min, const int max, const int probability);
+
+bool isCardAlreadyUsed(Deck deck, Card card);
 
 // Determines whether a function is blackjack
 // Pre: vector of structures Cards.
@@ -86,7 +102,7 @@ void clearHand(Hand& hand);
 //
 // Pre:
 // Post:
-void addCard(Hand& hand, Card card);
+void clearDeck(Deck& deck);
 
 //This function offers strategic recommendations to the player 
 // if the probability threshold is met; otherwise, it suggests a random action.
@@ -143,4 +159,21 @@ string adviseOptimalOptionOnLuck(const T probability_threshold, const int player
     return result;
 }  
 
+template <typename T> 
+void addCard(T& cardArray, Card card)
+{
+    cardArray.cards[cardArray.index].name_value = card.name_value;
+    cardArray.cards[cardArray.index].num_value = card.num_value;
+    cardArray.cards[cardArray.index].suit = card.suit;
+    cardArray.index++;
+}
+
+template <typename T> 
+void printArray(T& cardArray)
+{
+    cout << "Printing Array" << endl;
+    for (int i = 0; i < cardArray.index; i++) {
+        cout << cardArray.cards[i] << endl;
+    }
+}
 #endif

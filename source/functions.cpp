@@ -22,7 +22,7 @@ bool isBlackjack(Hand hand)
     }
 }
 
-Card generateRandomCard(const int min, const int max) 
+Card generateRandomCard(Deck& deck, const int min, const int max) 
 {
     Card card = {};
     int num = 0;
@@ -70,10 +70,18 @@ Card generateRandomCard(const int min, const int max)
             break;
     }
 
-    return card;
+    if (isCardAlreadyUsed(deck, card)) {
+        //cout << "Card already used, generating new card" << endl;
+        //cout << "Card is: " << card << endl;
+        return generateRandomCard(deck, min, max);
+    } else {
+        addCard(deck, card);
+        //printArray(deck);
+        return card;
+    }
 }
 
-Card generateRandomCard(const int min, const int max, const int probability) 
+Card generateRandomCard(Deck& deck, const int min, const int max, const int probability) 
 {
     Card card = {};
     int num = 0;
@@ -126,15 +134,25 @@ Card generateRandomCard(const int min, const int max, const int probability)
             break;
     }
 
-    return card;
+    if (isCardAlreadyUsed(deck, card)) {
+        //cout << "Card already used, generating new card" << endl;
+        //cout << "Card is: " << card << endl;
+        return generateRandomCard(deck, min, max, probability);
+    } else {
+        addCard(deck, card);
+        //printArray(deck);
+        return card;
+    }
 }
 
-void addCard(Hand& hand, Card card)
-{
-    hand.cards[hand.index].name_value = card.name_value;
-    hand.cards[hand.index].num_value = card.num_value;
-    hand.cards[hand.index].suit = card.suit;
-    hand.index++;
+bool isCardAlreadyUsed(Deck deck, Card card) {
+    bool result = false;
+    for (int i = 0; i < deck.index; i++) {
+        if (deck.cards[i] == card) {
+            result = true;
+        }
+    }
+    return result;
 }
 
 void clearHand(Hand& hand) {
@@ -146,12 +164,21 @@ void clearHand(Hand& hand) {
     hand.index = 0;
 }
 
+void clearDeck(Deck& deck) {
+    for(int i = 0; i < 52; ++i) {
+        deck.cards[i].num_value = 0;
+        deck.cards[i].name_value = "";
+        deck.cards[i].suit = "";
+    }
+    deck.index = 0;
+}
+
 void outputHand(Hand hand, string name)
 {
     cout << name << "'s Hand: ";
     for (int i = 0; i < hand.index; i++)
     {
-        cout << hand.cards[i].name_value << " of " << hand.cards[i].suit;
+        cout << hand.cards[i];
         if (i != (hand.index - 1))
         {
             cout << ", ";
