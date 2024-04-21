@@ -1,5 +1,6 @@
 CC = g++
 # -s removes symbol table information, DO NOT USE if you want to debug
+# -pedantic-errors at one point seemed to cause undefined references when passing structs by reference
 CFLAGS = -Wall -I include -g -W -pedantic-errors
 GTEST_DIR = /usr/lib/x86_64-linux-gnu
 GTEST_LIB = $(GTEST_DIR)/libgtest.a

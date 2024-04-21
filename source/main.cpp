@@ -1,7 +1,7 @@
 // Programmer: Jack Case
 // Student Id: 12601013
 // Section: 301
-// Date: 03/31/2024
+// Date: 04/20/2024
 // File: main.cpp
 // Purpose: A program that allows users to play games of blackjack.
 
@@ -15,7 +15,7 @@ using namespace std;
 
 int main() {
 	Player player1 = {};
-	vector<Card> dealer_hand;
+	Hand dealer_hand = {};
 	int og_bal = 0;
 	float wager = 0;
 	float temp_balance = 0;
@@ -27,14 +27,14 @@ int main() {
 	string first_choice = "";
 	string choice = "";
 	string advice = "";
-	char again;
+	char again = 'y';
 	
 
 	cout << "Enter player name: ";
 	cin >> player1.name;
 
 	// Assign random balance to player between 100 and 1000
-	srand(2101);
+	srand(1570);
 	player1.balance = 100.00 + rand() % 901 + (static_cast<float>(rand() % 101) / 100);
 	cout << player1.name << "'s Balance: " << player1.balance << endl;
 	og_bal = player1.balance;
@@ -42,8 +42,8 @@ int main() {
 	// Do While
 	do {
 		// Reset variables
-		player1.current_hand = {};
-		dealer_hand = {};
+		clearHand(player1.current_hand);
+		clearHand(dealer_hand);
 		temp_balance = player1.balance;
 		player_turn_over = false;
 		gameover = false;
@@ -65,22 +65,22 @@ int main() {
 		// Check if player is lucky:
 		if ((rand() % 101) <= 15)
 		{
-			player1.current_hand.push_back(generateRandomCard(1,13, rand() % 101));
-			player1.current_hand.push_back(generateRandomCard(1,13, rand() % 101));
+			addCard(player1.current_hand, generateRandomCard(1,13, rand() % 101));
+			addCard(player1.current_hand, generateRandomCard(1,13, rand() % 101));
 		}
 		else
 		{
-			player1.current_hand.push_back(generateRandomCard(1,13));
-			player1.current_hand.push_back(generateRandomCard(1,13));
+			addCard(player1.current_hand, generateRandomCard(1,13));
+			addCard(player1.current_hand, generateRandomCard(1,13));
 		}
-		dealer_hand.push_back(generateRandomCard(1,13));
-		dealer_hand.push_back(generateRandomCard(1,13));
+		addCard(dealer_hand, generateRandomCard(1,13));
+		addCard(dealer_hand, generateRandomCard(1,13));
 
 		// Print Hands
 		cout << endl;
-		outputPlayerHand(player1);
+		outputHand(player1.current_hand, player1.name);
 
-		cout << "Dealers's Hand: " << dealer_hand[0].name_value << " of " << dealer_hand[0].suit 
+		cout << "Dealers's Hand: " << dealer_hand.cards[0].name_value << " of " << dealer_hand.cards[0].suit 
 		<< ", [Hidden Card]" << endl;
 		cout << endl;
 		// Check for blackjack
@@ -102,8 +102,8 @@ int main() {
 			cout << endl;
 			displayOutcome("dealerblackjack", player1.balance, temp_balance);
 			cout << endl;
-			outputPlayerHand(player1);
-			outputDealerHand(dealer_hand);
+			outputHand(player1.current_hand, player1.name);
+			outputHand(dealer_hand, "Dealer");
 			gameover = true;
 			player_turn_over = true;
 			bust_or_black = true;
@@ -111,8 +111,8 @@ int main() {
 		else if ((isBlackjack(player1.current_hand)) && (isBlackjack(dealer_hand)))
 		{
 			// Game Over
-			outputPlayerHand(player1);
-			outputDealerHand(dealer_hand);
+			outputHand(player1.current_hand, player1.name);
+			outputHand(dealer_hand, "Dealer");
 			displayOutcome("tie", player1.balance, temp_balance);
 			player1.ties_blackjack++;
 			gameover = true;
@@ -153,7 +153,7 @@ int main() {
 				if (first_time)
 				{
 					// Advise Player
-					advice = adviseOptimalOptionOnLuck<int>((rand() % 101), getTotal(player1.current_hand), dealer_hand[0].num_value);
+					advice = adviseOptimalOptionOnLuck<int>((rand() % 101), getTotal(player1.current_hand), dealer_hand.cards[0].num_value);
 					cout << "Advise: " << advice << endl;
 					first_time = false;
 				}
@@ -180,8 +180,8 @@ int main() {
 
 				if (choice == "Hit")
 				{
-					player1.current_hand.push_back(generateRandomCard(1,13));
-					outputPlayerHand(player1);
+					addCard(player1.current_hand, generateRandomCard(1,13));
+					outputHand(player1.current_hand, player1.name);
 
 				}
 				else if (choice == "Stand")
@@ -191,8 +191,8 @@ int main() {
 				else if (choice == "Double-Down")
 				{
 					wager = wager * 2;
-					player1.current_hand.push_back(generateRandomCard(1,13));
-					outputPlayerHand(player1);
+					addCard(player1.current_hand, generateRandomCard(1,13));
+					outputHand(player1.current_hand, player1.name);
 					if (getTotal(player1.current_hand) > 21)
 					{
 						// Game Over
@@ -212,12 +212,12 @@ int main() {
 		if (!gameover)
 		{
 			cout << "Dealer's Turn" << endl;
-			outputDealerHand(dealer_hand);
+			outputHand(dealer_hand, "Dealer");
 			while (getTotal(dealer_hand) < 17)
 			{
-				dealer_hand.push_back(generateRandomCard(1,13));
+				addCard(dealer_hand, generateRandomCard(1,13));
 				cout << "Dealer Hits." << endl;
-				outputDealerHand(dealer_hand);
+				outputHand(dealer_hand, "Dealer");
 			}
 
 			if (getTotal(dealer_hand) > 21)
@@ -238,13 +238,10 @@ int main() {
 		cout << endl;
 		// Determine Winner if not already determined
 
-		// outputPlayerHand(player1);
-		// outputDealerHand(dealer_hand);
-
 		if (!bust_or_black)
 		{
-			outputPlayerHand(player1);
-			outputDealerHand(dealer_hand);
+			outputHand(player1.current_hand, player1.name);
+			outputHand(dealer_hand, "Dealer");
 
 			if (getTotal(player1.current_hand) > getTotal(dealer_hand))
 			{

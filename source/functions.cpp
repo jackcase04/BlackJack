@@ -1,19 +1,18 @@
 #include <iostream>
-#include "blackjack.h"
 #include <string>
 #include <cstdlib>
-#include <ctime>
+#include "blackjack.h"
 
 using namespace std;
 
-bool isBlackjack(vector<Card> hand)
+bool isBlackjack(Hand hand)
 {
-    if (hand.size() != 2)
+    if (hand.index != 2)
     {
         return false;
     }
-    else if (((hand[0].num_value == 10) && (hand[1].num_value == 11)) || 
-        ((hand[0].num_value == 11) && (hand[1].num_value == 10))) 
+    else if (((hand.cards[0].num_value == 10) && (hand.cards[1].num_value == 11)) || 
+        ((hand.cards[0].num_value == 11) && (hand.cards[1].num_value == 10))) 
     {
         return true;
     }
@@ -27,7 +26,6 @@ Card generateRandomCard(const int min, const int max)
 {
     Card card = {};
     int num = 0;
-    //card.num_value = min + rand() % max;
     card.num_value = rand() % (max - min + 1) + min;
 
     if (card.num_value == 1)
@@ -131,13 +129,30 @@ Card generateRandomCard(const int min, const int max, const int probability)
     return card;
 }
 
-void outputPlayerHand(Player player)
+void addCard(Hand& hand, Card card)
 {
-    cout << player.name << "'s Hand: ";
-    for (unsigned int i = 0; i <= (player.current_hand.size() - 1); i++)
+    hand.cards[hand.index].name_value = card.name_value;
+    hand.cards[hand.index].num_value = card.num_value;
+    hand.cards[hand.index].suit = card.suit;
+    hand.index++;
+}
+
+void clearHand(Hand& hand) {
+    for(int i = 0; i < 17; ++i) {
+        hand.cards[i].num_value = 0;
+        hand.cards[i].name_value = "";
+        hand.cards[i].suit = "";
+    }
+    hand.index = 0;
+}
+
+void outputHand(Hand hand, string name)
+{
+    cout << name << "'s Hand: ";
+    for (int i = 0; i < hand.index; i++)
     {
-        cout << player.current_hand[i].name_value << " of " << player.current_hand[i].suit;
-        if (i != (player.current_hand.size() - 1))
+        cout << hand.cards[i].name_value << " of " << hand.cards[i].suit;
+        if (i != (hand.index - 1))
         {
             cout << ", ";
         }
@@ -145,28 +160,14 @@ void outputPlayerHand(Player player)
     cout << endl;
 }
 
-void outputDealerHand(vector<Card> hand)
-{
-    cout << "Dealer's Hand: ";
-    for (unsigned int i = 0; i <= (hand.size() - 1); i++)
-    {
-        cout << hand[i].name_value << " of " << hand[i].suit;
-        if (i != (hand.size() - 1))
-        {
-            cout << ", ";
-        }
-    }
-    cout << endl;
-}
-
-int getTotal(vector<Card> hand)
+int getTotal(Hand hand)
 {
     int aces_in_hand = 0;
     int sum = 0;
-    for (unsigned int i = 0; i <= (hand.size() - 1); i++)
+    for (int i = 0; i < hand.index; i++)
     {
-        sum += hand[i].num_value;
-        if (hand[i].num_value == 11)
+        sum += hand.cards[i].num_value;
+        if (hand.cards[i].num_value == 11)
         {
             aces_in_hand++;
         }

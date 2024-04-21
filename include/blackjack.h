@@ -2,7 +2,6 @@
 #define BLACKJACK_H
 
 #include <string>
-#include <vector>
 
 using namespace std;
 
@@ -13,9 +12,14 @@ struct Card {
 
 };
 
+struct Hand {
+    int index;
+    Card cards[17];
+};
+
 struct Player {
 	float balance;
-	vector<Card> current_hand;
+	Hand current_hand;
 	int rounds;
 	int wins_blackjack;
 	int wins_normal;
@@ -40,22 +44,17 @@ Card generateRandomCard(const int min, const int max, const int probability);
 // Determines whether a function is blackjack
 // Pre: vector of structures Cards.
 // Post: Returns true if the hand provided is Blackjack, returns false otherwise.
-bool isBlackjack(vector<Card> hand);
+bool isBlackjack(Hand hand);
 
 // This function takes a hand and returns the score of that hand.
 // Pre: vector of structures Cards.
 // Post: Returns an integer that is the score of that hand.
-int getTotal(vector<Card> hand);
+int getTotal(Hand hand);
 
 // This function prints the players hand.
 // Pre: Structure Player.
 // Post: Prints the players hand along with thier name.
-void outputPlayerHand(Player player);
-
-// This function prints the dealers hand.
-// Pre: vector of structures Cards.
-// Post: Prints the dealers hand.
-void outputDealerHand(vector<Card> hand);
+void outputHand(Hand hand, string name);
 
 // This fucntion updates the player’s balance after each round.
 // Pre: float balance, float wager, and bool player_win
@@ -78,6 +77,16 @@ void displayOutcome(string outcome, float balance, float temp_balance);
 void displayGameSummary(int rounds, int wins_reg, int wins_black, 
 int losses_reg, int losses_black, int ties_reg, int ties_black, 
 float balance, float diff);
+
+//
+// Pre:
+// Post:
+void clearHand(Hand& hand);
+
+//
+// Pre:
+// Post:
+void addCard(Hand& hand, Card card);
 
 //This function offers strategic recommendations to the player 
 // if the probability threshold is met; otherwise, it suggests a random action.
