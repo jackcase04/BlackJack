@@ -173,8 +173,16 @@ void clearDeck(Deck& deck) {
     deck.index = 0;
 }
 
-void outputHand(Hand hand, string name)
+void printHand(Hand& hand, string name)
 {
+    for (int i = 0; i < hand.index; i++) {
+        for (int j = 0; j < hand.index - i - 1; j++) {
+            if (hand.cards[j+1] > hand.cards[j]) {
+				swap(hand.cards[j], hand.cards[j+1]);
+            }
+        }
+    }
+
     cout << name << "'s Hand: ";
     for (int i = 0; i < hand.index; i++)
     {

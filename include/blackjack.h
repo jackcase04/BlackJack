@@ -11,13 +11,43 @@ struct Card {
 	string name_value;
 	int num_value;
 
+    // This operator == is overloaded for the struct Card to check if cards are the same.
+    // Pre: Two structs Card.
+    // Post: A true or false value.
     bool operator==(const Card& card) const {
         return (name_value == card.name_value) && (suit == card.suit);
     }
 
+    // This operator << is overloaded to print a Card more easily.
+    // Pre: A struct Card.
+    // Post: A printed statement of the Card.
     friend ostream& operator<<(ostream& os, const Card& card) {
         os << card.name_value << " of " << card.suit;
         return os;
+    }
+    
+    // This operator > is overloaded to check which card is greater in the sorting algorithm.
+    // The order goes as such: Diamonds, Hearts, Clubs, then Spades, and if they are the same,
+    // then goes Ace, 2-10, Jack, Queen, King.
+    bool operator>(const Card& card) const {
+        if ((suit == "Diamonds") && (card.suit != "Diamonds")) {
+            return true;
+        } else if ((suit == "Hearts") && ((card.suit == "Clubs") || (card.suit == "Spades"))) {
+            return true;
+        } else if ((suit == "Clubs") && (card.suit == "Spades")) {
+            return true;
+        } else if (suit == card.suit) {
+            if (name_value == "Ace") {
+                return true;
+            } else if ((name_value == "Jack") && ((card.name_value == "Queen") || (card.name_value == "King"))) {
+                return true;
+            } else if ((name_value == "Queen") && (card.name_value == "King")) {
+                return true;
+            } else if (((name_value != "Ace") && (num_value != 10)) && num_value < card.num_value) {
+                return true;
+            } 
+        } 
+        return false;
     }
 };
 
@@ -44,35 +74,39 @@ struct Player {
 	string name;
 };
 
-// This function generates a random card value within an acceptable range. 
-// Pre: integer min, integer max
+// This function generates a random card value within an acceptable range,
+// making sure that it has not been drawn before. 
+// Pre: Struct Deck, integer min, integer max
 // Post: Returns a randomly generated structure Card.
 Card generateRandomCard(Deck& deck, const int min, const int max);
 
 // This special version not only generates a random card value but also incorporates a “luck factor”
 // that occasionally increases the likelihood of drawing a 10-valued card.
-// Pre: integer min, integer max, integer probability
+// Pre: Struct Deck, integer min, integer max, integer probability
 // Post: Returns a randomly generated structure Card that has a higher chance of being a face card.
 Card generateRandomCard(Deck& deck, const int min, const int max, const int probability);
 
+// This function checks if a card has already been drawn.
+// Pre: Struct Deck, Struct Card
+// Post: Returns true or false based on if it has been drawn yet or not.
 bool isCardAlreadyUsed(Deck deck, Card card);
 
 // Determines whether a function is blackjack
-// Pre: vector of structures Cards.
+// Pre: Struct Hand.
 // Post: Returns true if the hand provided is Blackjack, returns false otherwise.
 bool isBlackjack(Hand hand);
 
 // This function takes a hand and returns the score of that hand.
-// Pre: vector of structures Cards.
+// Pre: Struct Hand.
 // Post: Returns an integer that is the score of that hand.
 int getTotal(Hand hand);
 
-// This function prints the players hand.
-// Pre: Structure Player.
+// This function sorts the players hand and then prints it.
+// Pre: Struct Hand, string name.
 // Post: Prints the players hand along with thier name.
-void outputHand(Hand hand, string name);
+void printHand(Hand& hand, string name);
 
-// This fucntion updates the player’s balance after each round.
+// This function updates the player’s balance after each round.
 // Pre: float balance, float wager, and bool player_win
 // Post: Via passing by refrence, the players balance is altered.
 void updatePlayerBalance(float*balance, float wager, bool player_win);
@@ -94,14 +128,14 @@ void displayGameSummary(int rounds, int wins_reg, int wins_black,
 int losses_reg, int losses_black, int ties_reg, int ties_black, 
 float balance, float diff);
 
-//
-// Pre:
-// Post:
+// This function clears the provided hand.
+// Pre: Struct Hand
+// Post: Via passing by refrence, clears the hand.
 void clearHand(Hand& hand);
 
-//
-// Pre:
-// Post:
+// This function clears the deck.
+// Pre: Struct Hand
+// Post: Via passing by refrence, clears the deck.
 void clearDeck(Deck& deck);
 
 //This function offers strategic recommendations to the player 
@@ -159,6 +193,9 @@ string adviseOptimalOptionOnLuck(const T probability_threshold, const int player
     return result;
 }  
 
+// This function adds a card to an array.
+// Pre: type T array, Struct Card.
+// Post: Via passing by refrence, adds a card to the passed array.
 template <typename T> 
 void addCard(T& cardArray, Card card)
 {
@@ -168,6 +205,9 @@ void addCard(T& cardArray, Card card)
     cardArray.index++;
 }
 
+// This function prints an array (used for testing).
+// Pre: type T array.
+// Post: Prints an array.
 template <typename T> 
 void printArray(T& cardArray)
 {
@@ -176,4 +216,5 @@ void printArray(T& cardArray)
         cout << cardArray.cards[i] << endl;
     }
 }
+
 #endif

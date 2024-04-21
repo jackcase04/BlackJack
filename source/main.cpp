@@ -28,7 +28,7 @@ int main() {
 	string first_choice = "";
 	string choice = "";
 	string advice = "";
-	char again = 'y';
+	string again = "y";
 	
 
 	cout << "Enter player name: ";
@@ -57,12 +57,18 @@ int main() {
 
 		// Prompt for wager
 		cout << "How much would you like to wager?" << endl;
-		cin >> wager;
-		while (wager > player1.balance)
-		{
-			cout << "You don't have that kind of money!" << endl;
-			cin >> wager;
-		}
+		while (!(cin >> wager) || wager <= 0 || wager > player1.balance) {
+
+			cin.clear();
+			cin.ignore(100000, '\n');
+
+			if (wager <= 0) {
+				cout << "Invalid wager. Please enter a positive integer." << endl;
+			} else if (wager > player1.balance) {
+				cout << "You don't have that kind of money!" << endl;
+			}
+		}	
+
 		// Initialize hands
 		// Check if player is lucky:
 		if ((rand() % 101) <= 15)
@@ -80,7 +86,7 @@ int main() {
 
 		// Print Hands
 		cout << endl;
-		outputHand(player1.current_hand, player1.name);
+		printHand(player1.current_hand, player1.name);
 
 		cout << "Dealers's Hand: " << dealer_hand.cards[0].name_value << " of " << dealer_hand.cards[0].suit 
 		<< ", [Hidden Card]" << endl;
@@ -104,8 +110,8 @@ int main() {
 			cout << endl;
 			displayOutcome("dealerblackjack", player1.balance, temp_balance);
 			cout << endl;
-			outputHand(player1.current_hand, player1.name);
-			outputHand(dealer_hand, "Dealer");
+			printHand(player1.current_hand, player1.name);
+			printHand(dealer_hand, "Dealer");
 			gameover = true;
 			player_turn_over = true;
 			bust_or_black = true;
@@ -113,8 +119,8 @@ int main() {
 		else if ((isBlackjack(player1.current_hand)) && (isBlackjack(dealer_hand)))
 		{
 			// Game Over
-			outputHand(player1.current_hand, player1.name);
-			outputHand(dealer_hand, "Dealer");
+			printHand(player1.current_hand, player1.name);
+			printHand(dealer_hand, "Dealer");
 			displayOutcome("tie", player1.balance, temp_balance);
 			player1.ties_blackjack++;
 			gameover = true;
@@ -183,7 +189,7 @@ int main() {
 				if (choice == "Hit")
 				{
 					addCard(player1.current_hand, generateRandomCard(deck, 1,13));
-					outputHand(player1.current_hand, player1.name);
+					printHand(player1.current_hand, player1.name);
 
 				}
 				else if (choice == "Stand")
@@ -194,7 +200,7 @@ int main() {
 				{
 					wager = wager * 2;
 					addCard(player1.current_hand, generateRandomCard(deck, 1,13));
-					outputHand(player1.current_hand, player1.name);
+					printHand(player1.current_hand, player1.name);
 					if (getTotal(player1.current_hand) > 21)
 					{
 						// Game Over
@@ -214,12 +220,12 @@ int main() {
 		if (!gameover)
 		{
 			cout << "Dealer's Turn" << endl;
-			outputHand(dealer_hand, "Dealer");
+			printHand(dealer_hand, "Dealer");
 			while (getTotal(dealer_hand) < 17)
 			{
 				addCard(dealer_hand, generateRandomCard(deck, 1,13));
 				cout << "Dealer Hits." << endl;
-				outputHand(dealer_hand, "Dealer");
+				printHand(dealer_hand, "Dealer");
 			}
 
 			if (getTotal(dealer_hand) > 21)
@@ -242,8 +248,8 @@ int main() {
 
 		if (!bust_or_black)
 		{
-			outputHand(player1.current_hand, player1.name);
-			outputHand(dealer_hand, "Dealer");
+			printHand(player1.current_hand, player1.name);
+			printHand(dealer_hand, "Dealer");
 
 			if (getTotal(player1.current_hand) > getTotal(dealer_hand))
 			{
@@ -274,14 +280,14 @@ int main() {
 		{
 			cout << "Play Again? (y/n)" << endl;
 			cin >> again;
-			while (again != 'y' && again != 'n')
+			while (again != "y" && again != "n")
 			{
 				cout << "Please Enter (y/n)" << endl;
 				cin >> again;
 			}
 		}
 		
-	} while(again == 'y');
+	} while(again == "y");
 
 	if (player1.balance > 0)
 	{
