@@ -6,10 +6,8 @@
 // Purpose: A program that allows users to play games of blackjack.
 
 #include <iostream>
-#include "blackjack.h"
 #include <string>
-#include <cstdlib>
-#include <iomanip>
+#include "blackjack.h"
 
 using namespace std;
 

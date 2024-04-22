@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <cstdlib>
 #include "blackjack.h"
 
 using namespace std;
@@ -299,6 +298,6 @@ float balance, float diff)
     cout << "Total Ties (Regular): " << ties_reg << endl;
     cout << "Total Ties (Blackjack): " << ties_black << endl;
     cout << "Final Balance: $" << balance << endl;
-    cout << "Net Gain/Loss: " << diff << endl << endl;
+    cout << "Net Gain/Loss: $" << diff << endl << endl;
     cout << "Thank you for playing CodeJack: The Blackjack Simulator!" << endl << "We hope to see you again soon." << endl;
 }
